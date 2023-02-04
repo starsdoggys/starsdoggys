@@ -1,0 +1,287 @@
+import os
+
+import pygame as pg
+
+ 
+
+keybinding = {
+
+    'action':pg.K_s,
+
+    'jump':pg.K_a,
+
+    'left':pg.K_LEFT,
+
+    'right':pg.K_RIGHT,
+
+    'down':pg.K_DOWN
+
+}
+
+ 
+
+class Control(object):
+
+    """Control class for entire project. Contains the game loop, and contains
+
+    the event_loop which passes events to States as needed. Logic for flipping
+
+    states is also found here."""
+
+    def __init__(self, caption):
+
+        self.screen = pg.display.get_surface()
+
+        self.done = False
+
+        self.clock = pg.time.Clock()
+
+        self.caption = caption
+
+        self.fps = 60
+
+        self.show_fps = False
+
+        self.current_time = 0.0
+
+        self.keys = pg.key.get_pressed()
+
+        self.state_dict = {}
+
+        self.state_name = None
+
+        self.state = None
+
+ 
+
+    def setup_states(self, state_dict, start_state):
+
+        self.state_dict = state_dict
+
+        self.state_name = start_state
+
+        self.state = self.state_dict[self.state_name]
+
+ 
+
+    def update(self):
+
+        self.current_time = pg.time
+       import os
+
+import pygame as pg
+
+from . import tools
+
+from .import constants as c
+
+ 
+
+ORIGINAL_CAPTION = c.ORIGINAL_CAPTION
+
+ 
+
+ 
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+
+pg.init()
+
+pg.event.set_allowed([pg.KEYDOWN, pg.KEYUP, pg.QUIT])
+
+pg.display.set_caption(c.ORIGINAL_CAPTION)
+
+SCREEN = pg.display.set_mode(c.SCREEN_SIZE)
+
+SCREEN_RECT = SCREEN.get_rect()
+
+ 
+
+ 
+
+FONTS = tools.load_all_fonts(os.path.join("resources","fonts"))
+
+MUSIC = tools.load_all_music(os.path.join("resources","music"))
+
+GFX   = tools.load_all_gfx(os.path.join("resources","graphics"))
+
+SFX   = tools.load_all_sfx(os.path.join("resources","sound"))
+from .. import setup, tools
+
+from .. import constants as c
+
+from .. import game_sound
+
+from ..components import info
+
+ 
+
+ 
+
+class LoadScreen(tools._State):
+
+    def __init__(self):
+
+        tools._State.__init__(self)
+
+ 
+
+    def startup(self, current_time, persist):
+
+        self.start_time = current_time
+
+        self.persist = persist
+
+        self.game_info = self.persist
+
+        self.next = self.set_next_state()
+
+ 
+
+        info_state = self.set_overhead_info_state()
+
+ 
+
+        self.overhead_info = info.OverheadInfo(self.game_info, info_state)
+
+        self.sound_manager = game_sound.Sound(self.overhead_info)
+
+ 
+
+ 
+
+    def set_next_state(self):
+
+        """Sets the next state"""
+
+        return c.LEVEL1
+
+ 
+
+    def set_overhead_info_state(self):
+
+        """sets the state to send to the overhead info object"""
+
+        return c.LOAD_SCREEN
+
+ 
+
+ 
+
+    def update(self, surface, keys, current_time):
+
+        """Updates the loading screen"""
+
+        if (current_time - self.start_time) < 2400:
+
+            surface.import pygame as pg
+
+from .. import setup, tools
+
+from .. import constants as c
+
+from .. components import info, mario
+
+ 
+
+ 
+
+class Menu(tools._State):
+
+    def __init__(self):
+
+        """Initializes the state"""
+
+        tools._State.__init__(self)
+
+        persist = {c.COIN_TOTAL: 0,
+
+                   c.SCORE: 0,
+
+                   c.LIVES: 3,
+
+                   c.TOP_SCORE: 0,
+
+                   c.CURRENT_TIME: 0.0,
+
+                   c.LEVEL_STATE: None,
+
+                   c.CAMERA_START_X: 0,
+
+                   c.MARIO_DEAD: False}
+
+        self.startup(0.0, persist)
+
+ 
+
+    def startup(self, current_time, persist):
+
+        """Called every time the game's state becomes this one.  Initializes
+
+        certain values"""
+
+        self.next = c.LOAD_SCREEN
+
+        self.persist = persist
+
+        self.game_info = persist
+
+        self.overhead_info = info.OverheadInfo(self.game_info, c.MAIN_MENU)
+
+ 
+
+        self.sprite_sheet = setup.GFX['title_screen']
+
+        self.setup_background()
+
+        self.setu
+        from . import setup,tools
+
+from .states import main_menu,load_screen,level1
+
+from . import constants as c
+
+ 
+
+ 
+
+def main():
+
+    """Add states to control here."""
+
+    run_it = tools.Control(setup.ORIGINAL_CAPTION)
+
+    state_dict = {c.MAIN_MENU: main_menu.Menu(),
+
+                  c.LOAD_SCREEN: load_screen.LoadScreen(),
+
+                  c.TIME_OUT: load_screen.TimeOut(),
+
+                  c.GAME_OVER: load_screen.GameOver(),
+
+                  c.LEVEL1: level1.Level1()}
+
+ 
+
+    run_it.setup_states(state_dict, c.MAIN_MENU)
+
+    run_it.main()
+    import sys
+
+import pygame as pg
+
+from 小游戏.超级玛丽.data.main import main
+
+import cProfile
+
+ 
+
+ 
+
+if __name__=='__main__':
+
+    main()
+
+    pg.quit()
+
+    sys.exit()
